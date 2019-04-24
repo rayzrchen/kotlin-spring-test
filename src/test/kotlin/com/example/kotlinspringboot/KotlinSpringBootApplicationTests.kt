@@ -61,9 +61,8 @@ class KotlinSpringBootApplicationTests {
 
 
 @RunWith(SpringRunner::class)
-@SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class Integration1Tests{
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class Integration1Tests {
 
     @Autowired
     private lateinit var restTemplate: TestRestTemplate
@@ -79,10 +78,11 @@ class Integration1Tests{
 }
 
 
+// only the rest api
 @RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntegrationTests{
+class IntegrationTests {
 
     @Autowired
     private lateinit var mockMvc: MockMvc
