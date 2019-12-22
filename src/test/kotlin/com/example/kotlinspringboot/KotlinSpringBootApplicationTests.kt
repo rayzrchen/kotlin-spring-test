@@ -1,102 +1,63 @@
 package com.example.kotlinspringboot
 
+import com.ninjasquad.springmockk.MockkBean
+import io.mockk.every
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.junit4.SpringRunner
-import java.util.*
-
-import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.*
 
-class KotlinSpringBootApplicationTests {
+@SpringBootTest
+class KotlinSpringBootApplicationTests(
+        @Autowired private val homeController: HomeController
+) {
 
-    @InjectMocks
-    private lateinit var homeController: HomeController
+    private val id = UUID.randomUUID()
 
+    @MockkBean
+    lateinit var test1Repository: Test1Repository
 
-    @Mock
-    private lateinit var test1Repository: Test1Repository
-
-    @Before
+    @BeforeEach
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        every { test1Repository.findByIdOrNull(id) } returns Test1(id, "test1")
     }
-
-//    @Test
-//    fun homeTest() {
-//
-//
-//        val homeController = HomeController()
-//        val actual = homeController.home()
-//        assertThat(actual).isEqualTo("hello")
-//    }
 
     @Test
-    internal fun homeWithRepositoryTest() {
-        val expected = "Ray"
+    fun homeTest() {
 
-        val uuid = UUID.randomUUID()
-        val test1 = Test1(uuid, expected)
-        `when`(test1Repository.findById(uuid)).thenReturn(Optional.of(test1))
+        val actual = homeController.home(id)
+        assertThat(actual).isEqualTo("test1")
 
-        val actual = homeController.home(uuid)
-
-        assertThat(actual).isEqualTo(expected)
+        assertThrows<RuntimeException>("not found") {
+            homeController.home(UUID.randomUUID())
+        }
     }
-
 
 }
 
 
-@RunWith(SpringRunner::class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class Integration1Tests {
-
-    @Autowired
-    private lateinit var restTemplate: TestRestTemplate
-
-    @Test
-    fun mockMvcTest() {
-        val insertedRecordId = "648a7a92-2cc0-4fbc-bd6a-aeca55435ca3"
-        val expectedResult = "test1"
-
-        val actual = this.restTemplate.getForObject("/$insertedRecordId", String::class.java)
-        assertThat(actual).isEqualTo(expectedResult)
-    }
-}
-
-
-// only the rest api
-@RunWith(SpringRunner::class)
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntegrationTests {
+class IntegrationTests(
+        @Autowired private val mockMvc: MockMvc
+) {
 
-    @Autowired
-    private lateinit var mockMvc: MockMvc
 
     @Test
     fun firstTest() {
-
         val expectedResult = "test1"
-
         mockMvc.perform(get("/test"))
                 .andExpect(status().isOk)
                 .andExpect(content().string(expectedResult))
-
-
     }
 
 }
