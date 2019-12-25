@@ -1,0 +1,14 @@
+/* adder.jj Adding up numbers */
+options {
+STATIC = false ;
+}
+
+PARSER BEGIN(Adder)
+class Adder {
+static void main( String[] args )
+throws ParseException, TokenMgrError {
+Adder parser = new Adder( System.in ) ;
+parser.Start() ; }
+}
+
+PARSER END(Adder)

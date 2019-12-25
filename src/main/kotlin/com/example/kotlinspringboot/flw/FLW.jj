@@ -1,0 +1,52 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(FLW)
+
+package com.example.kotlinspringboot.flw;
+
+import java.io.*;
+
+
+public class FLW {
+
+    static String substitute(String inString) {
+        FLW flw = new FLW(new StringReader(inString));
+        StringBuffer stringBuffer = new StringBuffer();
+        try{
+            flw.start(stringBuffer);
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+        return stringBuffer.toString();
+    }
+
+}
+PARSER_END(FLW)
+
+
+
+
+TOKEN : {
+    < FOUR_LETTER_WORDS: (<LETTER>){4} >
+|   < FIVE_OR_MORE_LETTER_WORDS: (<LETTER>){5} (<LETTER>)* >
+|   < #LETTER: ["A" - "Z", "a" - "z", "'", "-", "0" - "9"] >
+|   < OTHER: ~[] >
+}
+
+
+void start(StringBuffer stringBuffer) :
+{
+    Token t;
+}
+{
+    (
+        <FOUR_LETTER_WORDS>
+        { stringBuffer.append("****"); }
+    |
+        (t = <FIVE_OR_MORE_LETTER_WORDS> | t = <OTHER> )
+        { stringBuffer.append(t.image); }
+    )*
+
+}

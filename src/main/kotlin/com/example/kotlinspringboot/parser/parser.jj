@@ -1,0 +1,197 @@
+options {
+  STATIC=false;
+}
+
+
+PARSER_BEGIN(DmParser)
+package com.example.kotlinspringboot.parser;
+
+import java.io.*;
+import java.util.*;
+
+public class DmParser {
+
+static List<String> substitute2(String inString) {
+    DmParser parser = new DmParser(new StringReader(inString));
+
+                try{
+                    return parser.substitute2();
+                } catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+}
+
+    static List<String> substitute(String inString) {
+            DmParser parser = new DmParser(new StringReader(inString));
+
+            try{
+                return parser.start();
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        }
+
+   List<String> concat(List<String> first, List<String> second) {
+       List<String> both = new ArrayList<String>(first.size() + second.size());
+        both.addAll(first);
+        both.addAll(second);
+        return both;
+    }
+
+        List<String> makeProduct(List<String> first, List<String> second, boolean isRightDirect) {
+            if (second.size() == 0)
+                return first;
+
+            List<String> result = new ArrayList<String>();
+
+            for (String f : first) {
+                for (String r : second){
+                    String con;
+                    if (!isRightDirect) {
+                        con = f + " " + r;
+                    }else{
+                        con = r + " " + f;
+                    }
+                    result.add(con);
+
+                }
+            }
+
+            return result;
+        }
+
+}
+PARSER_END(DmParser)
+
+
+
+TOKEN : {
+    < PHASE: <LETTER> (<LETTER>)*  >
+|   < OPEN_BRACE: "{" >
+|   < CLOSE_BRACE: "}" >
+|   < OR: "|" >
+|   < AND: " " >
+|   < PERCENT: "%" >
+|   < #LETTER: ~[ "{", "}", "|", " ", "%" ] | <_ESCAPED_CHAR> >
+|   < #_ESCAPED_CHAR:    "\\" ~[] >  // every character that follows a backslash is considered as an escaped character
+}
+
+//
+//<*> TOKEN : {
+//  <#_NUM_CHAR:        ["0"-"9"] >
+//| <#_ESCAPED_CHAR:    "\\" ~[] >  // every character that follows a backslash is considered as an escaped character
+//| <#_TERM_START_CHAR: ( ~[ "{", "}" ]
+//                        | <_ESCAPED_CHAR> ) >
+//| <#_TERM_CHAR:       ( <_TERM_START_CHAR> ) >
+//| <#_QUOTED_CHAR:     ( ~[ "{", "}" ] | <_ESCAPED_CHAR> ) >
+//}
+//
+//<DEFAULT> TOKEN : {
+//  <AND:           (" ") >
+//| <OR:            ("|") >
+//| <QUOTED:        "{" (<_QUOTED_CHAR>)* "}">
+//| <TERM:          <_TERM_START_CHAR> (<_TERM_CHAR>)*  >
+//}
+
+SKIP : {
+    < COMMENTS: "%!--" (~[])* "--%" >
+}
+
+
+List<String> start() :
+{
+    List<String> result;
+}
+{
+    result = expr()
+    {
+        return result;
+    }
+}
+
+List<String> substitute2() :
+{
+    List<String> result;
+}
+{
+    result = expr2()
+    {
+        return result;
+    }
+}
+
+List<String> expr2():
+{
+
+}
+{
+    expr()
+    (
+        <PERCENT> <PHASE> <PERCENT>
+        expr()
+    )*
+
+}
+
+
+
+List<String> expr():
+{
+    List<String> left;
+
+    List<String> right;
+    List<String> allRight = new ArrayList();
+}
+{
+    left = wordsOrGroup()
+    (
+        [ <AND> ]
+        right = wordsOrGroup()
+        {
+            allRight = makeProduct(right, allRight, true);
+        }
+    )*
+
+    {
+        return makeProduct(left, allRight, false);
+    }
+
+}
+
+List<String> wordsOrGroup():
+{
+    List<String> phase;
+    List<String> result = new ArrayList();
+}
+{
+    phase = phaseOrGroup()
+    {
+        result = concat(result, phase);
+    }
+    (
+        <OR>
+        phase = phaseOrGroup()
+        { result = concat(result, phase); }
+    )*
+
+    { return result; }
+
+}
+
+List<String> phaseOrGroup() :
+{
+    Token token;
+    List<String> e;
+}
+{
+    token = <PHASE>
+    {
+        return Collections.singletonList(token.image);
+    }
+|
+    (
+        <OPEN_BRACE> e = expr() <CLOSE_BRACE>
+        {  return e; }
+    )
+
+}

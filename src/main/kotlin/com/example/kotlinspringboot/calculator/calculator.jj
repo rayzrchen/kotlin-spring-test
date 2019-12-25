@@ -1,0 +1,112 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN(Calculator)
+
+package com.example.kotlinspringboot.calculator;
+
+import java.io.*;
+
+public class Calculator {
+    private double previousValue = 0.0;
+
+    static void parse(String str) throws Exception {
+        Calculator calculator = new Calculator(new StringReader(str));
+        calculator.start(System.out);
+    }
+
+}
+PARSER_END(Calculator)
+
+
+SKIP : {
+ " "
+}
+
+TOKEN : {
+     < EOL: "\n" | "\r" | "\r\n" >
+|    < PLUS: "+" >
+|    < MINUS: "-" >
+|    < TIMES: "*" >
+|    < DIVID: "/" >
+|    < OPEN_PAR: "(" >
+|    < CLOSE_PAR: ")" >
+|    < PREVIOUS: "$" >
+|    < NUMBER: <DIGITS> | <DIGITS> "." <DIGITS> | <DIGITS> "." | "." <DIGITS> >
+|    < #DIGITS: (["0" - "9"])+ >
+}
+
+void start(PrintStream printStream) throws NumberFormatException :
+{
+}
+{
+    (
+        previousValue = expression()
+        <EOL>
+        { printStream.println(previousValue); }
+    )*
+    <EOF>
+}
+
+
+double expression() throws NumberFormatException :
+{
+    double i;
+    double value;
+}
+{
+    value = term()
+    (
+        <PLUS>
+        i = term()
+        { value += i; }
+    |
+        <MINUS>
+        i = term()
+        { value -= i; }
+    )*
+    { return value; }
+}
+
+double term() throws NumberFormatException :
+{
+    double i;
+    double value;
+}
+{
+    value = primary()
+    (
+        <TIMES>
+        i = primary()
+        { value *= i; }
+    |
+        <DIVID>
+        i = primary()
+        { value /= i; }
+    )*
+    { return value; }
+}
+
+
+double primary() throws NumberFormatException :
+{
+    Token t;
+    double d;
+}
+{
+    t = <NUMBER>
+    { return Double.parseDouble(t.image);  }
+    |
+    <PREVIOUS>
+    { return previousValue;  }
+    |
+    <OPEN_PAR> d = expression() <CLOSE_PAR>
+    { return d;  }
+    |
+    <MINUS> d = primary()
+    { return -d; }
+
+}
+
+

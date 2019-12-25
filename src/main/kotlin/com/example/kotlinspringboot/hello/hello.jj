@@ -1,0 +1,40 @@
+PARSER_BEGIN(Hello)
+package com.example.kotlinspringboot.hello;
+
+import java.io.StringReader;
+
+public class Hello {
+
+    static void parse(String myString) throws Exception {
+//        InputStream is = new ByteArrayInputStream(StandardCharsets.UTF_16.encode(myString).array());
+        Hello hello = new Hello(new StringReader(myString));
+        Hello.words();
+    }
+
+}
+
+PARSER_END(Hello)
+
+
+
+SKIP: { " " |"\t" |"\n" |"\r" }
+
+TOKEN: { <WORD: (["a"-"z"])+ > }
+TOKEN: { <INT: (["0"-"9"])+ >  }
+
+void words():
+{
+  int id=0;
+}
+{
+  <WORD>
+      { id++;
+        System.out.println(id+" word");
+      }
+  <INT>
+     {
+       id++;
+       System.out.println(id + " id");
+     }
+
+}
