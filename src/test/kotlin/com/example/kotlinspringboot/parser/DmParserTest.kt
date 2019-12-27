@@ -40,14 +40,15 @@ internal class DmParserTest {
     @ParameterizedTest
     @CsvSource(
             "aaa|bb* %ANY% c, +(aaa bb*) +c",
-            "aaa|bb* %ANY% %whitspace%, +(aaa bb*)",
+            "aaa|bb* %ANY% %whitspace%, aaa bb*",
             "aaa|bb* %ANY%[3] c, +(aaa bb*) +c",
             "{aaa c}|bb* %ANY%[aaa] c, +('aaa c' bb*) +c",
             "aaa|bb* whole[?] c, 'aaa c' 'bb* c'",
             "aaa|bb* d%FALSE% c, 'aaa c' 'bb* c' -d",
             "aaa|bb* c d%FALSE%, 'aaa c' 'bb* c' -d",
             "aa?a|b-b* c %ANY% ff|gg d%FALSE%, +('aa?a c' 'b-b* c') +(ff gg) -d",
-            "aaa|bb* c {m|n o}%FALSE% d%FALSE%, 'aaa c' 'bb* c' -('m o' 'n o' d)",
+            "aaa|bb* c {m|n o {p|qq}}%FALSE% d%FALSE%, 'aaa c' 'bb* c' -('m o p' 'm o qq' 'n o p' 'n o qq' d)",
+            "%!-- Password --% PW | PWs | PWD | PWDs %PrecededBy% %WhiteSpace%, PW PWs PWD PWDs",
             "aaa|bb* c {mo|n-o}%FALSE%, 'aaa c' 'bb* c' -(mo 'n-o')"
     )
     internal fun `parse test with function`(inStr: String, outStr: String) {

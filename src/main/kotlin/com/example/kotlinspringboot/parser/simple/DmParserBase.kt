@@ -27,6 +27,17 @@ open class DmParserBase {
 
     }
 
+    private fun addQuote(it: String) = if (it.contains("[ +-]".toRegex())) "'$it'" else it
+
+    private fun appendOperator(s: String, operator: String): String {
+        return if (s.contains(" ")) {
+            "$operator($s)"
+        } else {
+            "$operator$s"
+        }
+
+    }
+
     fun mergeToLeft(left: MutableList<String>, right: MutableList<String>): MutableList<String> {
         val filter1 = left.filter { it.isNotEmpty() }.toMutableList()
         val filter2 = right.filter { it.isNotEmpty() }.toMutableList()
@@ -55,59 +66,34 @@ open class DmParserBase {
 
     }
 
-    fun handleParts(positiveList: List<String>, negativeList: MutableList<List<String>>): String {
-
-        fun appendOperator(s: String, operator: String): String {
-            return if (s.contains(" ")) {
-                "$operator($s)"
-            } else {
-                "$operator$s"
-            }
-
+    private fun handleNegative(negativeList: MutableList<List<String>>): String {
+        val filteredList = negativeList.flatten().filter { it.isNotEmpty() }
+        return when {
+            filteredList.isEmpty() -> ""
+            filteredList.size == 1 -> " " + appendOperator(filteredList[0], "-")
+            else -> " -(" + filteredList.joinToString(" ") { addQuote(it) } + ")"
         }
-
-        fun handleMultipleParts(): String {
-            return positiveList.filter { it.isNotEmpty() }
-                    .filter { !it.contains("%") }
-                    .joinToString(" ") {
-                        appendOperator(it, "+")
-                    }
-        }
-
-
-        fun handlePositive(): String {
-            return when {
-                positiveList.isEmpty() -> ""
-                positiveList.size == 1 -> positiveList[0]
-                else -> handleMultipleParts()
-            }
-        }
-
-        fun handleMultiplePartsNegative(list: List<String>): String {
-            return list.filter { it.isNotEmpty() }
-                    .map { if (it.contains("[ +-]".toRegex())) "'$it'" else it }
-                    .joinToString(" ")
-        }
-
-
-        fun handleNegative(): String {
-            val flatNegativeList = negativeList.flatten()
-            return when {
-                flatNegativeList.isEmpty() -> ""
-                flatNegativeList.size == 1 -> " " + appendOperator(flatNegativeList[0], "-")
-                else -> " -(" + handleMultiplePartsNegative(flatNegativeList) + ")"
-            }
-        }
-
-        val positive = handlePositive()
-        val negative = handleNegative()
-
-        return "$positive$negative"
     }
 
+    private fun handlePositive(positiveList: List<String>): String {
+        val filteredList = positiveList.filter { it.isNotEmpty() }
+                .filter { !it.contains("%") }
+
+        return when {
+            filteredList.isEmpty() -> ""
+            filteredList.size == 1 -> filteredList[0]
+            else -> filteredList.joinToString(" ") {
+                appendOperator(it, "+")
+            }
+        }
+    }
+
+    fun handleParts(positiveList: List<String>, negativeList: MutableList<List<String>>): String {
+        return "${handlePositive(positiveList)}${handleNegative(negativeList)}"
+    }
 
     fun getPartString(list: MutableList<String>): String {
-        return list.joinToString(" ") { if (it.contains("[ +-]".toRegex())) "'$it'" else it }
+        return list.joinToString(" ") { addQuote(it) }
     }
 
     fun groupConsiderRepeat(
