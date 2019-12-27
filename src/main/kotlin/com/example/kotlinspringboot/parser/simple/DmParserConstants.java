@@ -25,11 +25,13 @@ public interface DmParserConstants {
   /** RegularExpression Id. */
   int CONCAT_FUNCTION = 7;
   /** RegularExpression Id. */
-  int REPEAT = 8;
+  int OTHER_FUNCTION = 8;
   /** RegularExpression Id. */
-  int LETTER = 9;
+  int REPEAT = 9;
   /** RegularExpression Id. */
-  int COMMENTS = 10;
+  int LETTER = 10;
+  /** RegularExpression Id. */
+  int COMMENTS = 11;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -44,6 +46,7 @@ public interface DmParserConstants {
     "<AND>",
     "\"%false%\"",
     "<CONCAT_FUNCTION>",
+    "<OTHER_FUNCTION>",
     "<REPEAT>",
     "<LETTER>",
     "<COMMENTS>",

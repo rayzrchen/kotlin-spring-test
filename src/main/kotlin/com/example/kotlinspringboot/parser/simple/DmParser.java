@@ -73,8 +73,7 @@ partStrings.add(partString);
       jj_consume_token(-1);
       throw new ParseException();
     }
-System.out.println(s);
-       {if ("" != null) return s;}
+{if ("" != null) return s;}
     throw new Error("Missing return statement in function");
 }
 
@@ -213,7 +212,7 @@ leftPhase = mergeToLeft(leftPhase, rightPhase);
     if (jj_scan_token(PHASE)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_scan_token(8)) jj_scanpos = xsp;
+    if (jj_scan_token(9)) jj_scanpos = xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(6)) jj_scanpos = xsp;
     return false;
@@ -285,7 +284,7 @@ leftPhase = mergeToLeft(leftPhase, rightPhase);
 	   jj_la1_init_0();
 	}
 	private static void jj_la1_init_0() {
-	   jj_la1_0 = new int[] {0x20,0x86,0x20,0x10,0x100,0x40,0x100,0x40,0x6,};
+	   jj_la1_0 = new int[] {0x20,0x86,0x20,0x10,0x200,0x40,0x200,0x40,0x6,};
 	}
   final private JJCalls[] jj_2_rtns = new JJCalls[1];
   private boolean jj_rescan = false;
@@ -498,7 +497,7 @@ leftPhase = mergeToLeft(leftPhase, rightPhase);
   /** Generate ParseException. */
   public ParseException generateParseException() {
 	 jj_expentries.clear();
-	 boolean[] la1tokens = new boolean[11];
+	 boolean[] la1tokens = new boolean[12];
 	 if (jj_kind >= 0) {
 	   la1tokens[jj_kind] = true;
 	   jj_kind = -1;
@@ -512,7 +511,7 @@ leftPhase = mergeToLeft(leftPhase, rightPhase);
 		 }
 	   }
 	 }
-	 for (int i = 0; i < 11; i++) {
+	 for (int i = 0; i < 12; i++) {
 	   if (la1tokens[i]) {
 		 jj_expentry = new int[1];
 		 jj_expentry[0] = i;

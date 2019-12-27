@@ -7,7 +7,6 @@ fun preHandling(inString: String): String {
             .replace("\\{}".toRegex(), "")
             .replace("\\s+".toRegex(), " ")
             .trim()
-            .also { println(it) }
 }
 
 

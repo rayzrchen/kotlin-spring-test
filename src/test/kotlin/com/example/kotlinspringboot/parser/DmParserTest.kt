@@ -46,7 +46,7 @@ internal class DmParserTest {
             "aaa|bb* whole[?] c, 'aaa c' 'bb* c'",
             "aaa|bb* d%FALSE% c, 'aaa c' 'bb* c' -d",
             "aaa|bb* c d%FALSE%, 'aaa c' 'bb* c' -d",
-            "aaa|bb* c %ANY% ff|gg d%FALSE%, +('aaa c' 'bb* c') +(ff gg) -d",
+            "aa?a|b-b* c %ANY% ff|gg d%FALSE%, +('aa?a c' 'b-b* c') +(ff gg) -d",
             "aaa|bb* c {m|n o}%FALSE% d%FALSE%, 'aaa c' 'bb* c' -('m o' 'n o' d)",
             "aaa|bb* c {mo|n-o}%FALSE%, 'aaa c' 'bb* c' -(mo 'n-o')"
     )

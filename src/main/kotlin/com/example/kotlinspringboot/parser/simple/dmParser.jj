@@ -47,7 +47,8 @@ TOKEN : {
 |   < AND: (" ")+ >
 |   < FALSE_FUNCTION: "%false%" >
 |   < CONCAT_FUNCTION: ("%any%" | "%precededBy%") (<REPEAT>)?  >
-|   < REPEAT: "[" (<LETTER>)+ "]" >
+|   < OTHER_FUNCTION: "%" (<LETTER>)+ "%" >
+|   < REPEAT: "[" (~["["])+ "]" >
 |   < #LETTER: ~[ "{", "}", "|", " ", "%", "[", "]"] >
 }
 
@@ -90,7 +91,6 @@ String getPartOrFunction():
 {
     (s = function() | s = simple())
     {
-       System.out.println(s);
        return s;
     }
 }
