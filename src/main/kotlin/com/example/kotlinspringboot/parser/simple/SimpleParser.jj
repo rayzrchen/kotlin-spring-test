@@ -1,0 +1,119 @@
+options {
+  STATIC=false;
+  JDK_VERSION="1.8";
+  JAVA_UNICODE_ESCAPE = true;
+  IGNORE_CASE = true;
+}
+
+
+PARSER_BEGIN(SimpleParser)
+package com.example.kotlinspringboot.parser.simple;
+
+import java.io.*;
+import java.util.List;
+
+public class SimpleParser extends SimpleParserBase {
+
+    public static String simpleParse(String inString) {
+        if (inString.equals("")) return "";
+        SimpleParser parser = new SimpleParser(new StringReader(inString));
+        try{
+            return parser.simple();
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+}
+
+PARSER_END(SimpleParser)
+
+
+TOKEN : {
+    < PHASE: <LETTER> (<LETTER>)*  >
+|   < OPEN_BRACE: "{" (" ")* >
+|   < CLOSE_BRACE: (" ")* "}" >
+|   < OR: (" ")* "|" (" ")* >
+|   < AND: (" ")+ >
+|   < REPEAT: "[" (~["["])+ "]" >
+|   < #LETTER: ~[ "{", "}", "|", " ", "[", "]"] >
+|   < OTHER: ~[] >
+}
+
+
+SKIP : {
+    < COMMENTS: "%!--" (<OTHER>)* "--%" >
+}
+
+
+String simple() :
+{
+    List<String> simpleResult;
+}
+{
+    simpleResult = expr()
+    {
+        return getPartString(simpleResult);
+    }
+}
+
+
+List<String> expr():
+{
+    List<String> leftTerm;
+    List<String> rightTerm;
+    Token concatToken = null;
+}
+{
+    leftTerm = wordsOrGroup()
+    (
+        [concatToken = <AND>]
+        rightTerm = wordsOrGroup()
+        {
+            leftTerm = getCombinationsOfTwoList(leftTerm, rightTerm, concatToken);
+        }
+    )*
+
+    {
+        return leftTerm;
+    }
+
+}
+
+List<String> wordsOrGroup():
+{
+    List<String> leftPhase;
+    List<String> rightPhase;
+}
+{
+    leftPhase = phaseOrGroup()
+    (
+        <OR>
+        rightPhase = phaseOrGroup()
+        { leftPhase = mergeToLeft(leftPhase, rightPhase); }
+    )*
+
+    { return leftPhase; }
+
+}
+
+List<String> phaseOrGroup() :
+{
+    Token token;
+    Token repeat = null;
+    List<String> expr;
+}
+{
+    token = <PHASE> [ repeat = <REPEAT>]
+    {
+        return singleElementList(token.image, repeat);
+    }
+|
+    (
+        <OPEN_BRACE> expr = expr() <CLOSE_BRACE> [ repeat = <REPEAT> ]
+        {
+            return groupConsiderRepeat(expr, repeat);
+        }
+    )
+
+}
