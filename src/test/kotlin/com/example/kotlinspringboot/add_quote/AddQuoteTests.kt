@@ -9,10 +9,10 @@ class AddQuoteTests {
     @ParameterizedTest
     @ValueSource(strings = [
         """
-            a,, "a"
+            a,, a
         """,
         """
-            a b,, "a" "b"
+            a b*,, a b*
         """,
         """
             "a b",, "a b"
@@ -21,10 +21,19 @@ class AddQuoteTests {
             +("a b"),, +("a b")
         """,
         """
-            +a +(b c),, +"a" +("b" "c")
+            +a +(b c),, +a +(b c)
         """,
         """
-            +a +("b c" d),, +"a" +("b c" "d")
+            +a +(b?st c),, +a +(b?st c)
+        """,
+        """
+            +a +(best* c),, +a +(best* c)
+        """,
+        """
+            +a +("my best*" c),, +a +("my best*" c)
+        """,
+        """
+            +a +(震撼晶片 d),, +a +("震撼晶片" d)
         """
     ])
     internal fun `add quote tests`(value: String) {

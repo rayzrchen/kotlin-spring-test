@@ -1,13 +1,14 @@
 package com.example.kotlinspringboot.add_quote
 
 interface AddQuoteService {
-    fun addQuoteForString(s: String): String
+    fun addQuoteForNonAsciiString(s: String): String
 }
 
 
 class AddQuote : AddQuoteService {
-    override fun addQuoteForString(s: String): String {
-        return s.replace("""(?<!")([^" ()+]+)(?!")""".toRegex(), "\"$1\"")
+
+    override fun addQuoteForNonAsciiString(s: String): String {
+        return s.replace("([^\\p{ASCII}]+)".toRegex(), "\"$1\"")
     }
 
 }
