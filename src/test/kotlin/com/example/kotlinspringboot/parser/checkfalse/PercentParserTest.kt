@@ -23,6 +23,7 @@ internal class PercentParserTest {
     internal fun `parse tests`(s: String) {
         val split = s.split("""\s*,,\s*""".toRegex())
         assertThat(getPreviousGroupOrWord(split[0]).toString()).isEqualTo(split[1])
+
     }
 
     fun removeAllButFalseFunction(s: String): String {
