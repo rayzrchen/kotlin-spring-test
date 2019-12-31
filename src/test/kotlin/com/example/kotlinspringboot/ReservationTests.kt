@@ -1,5 +1,7 @@
 package com.example.kotlinspringboot
 
+import com.example.kotlinspringboot.reservation.Reservation
+import com.example.kotlinspringboot.reservation.ReservationRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

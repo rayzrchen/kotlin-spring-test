@@ -5,6 +5,6 @@ import org.junit.jupiter.api.Test
 internal class FLWTest {
     @Test
     internal fun parseTest() {
-        println(FLW.substitute("abcd abcde 1234 aaa## "))
+        FLW.substitute("abcd abcde 1234 aaa## ")
     }
 }

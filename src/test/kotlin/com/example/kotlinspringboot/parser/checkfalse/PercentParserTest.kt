@@ -71,12 +71,6 @@ internal class PercentParserTest {
         return s.toLowerCase().split("%false%").filter { it.isNotBlank() }
     }
 
-    fun findFalseStartPositions(s: String): List<IntRange> {
-        val all = "%false%".toRegex(RegexOption.IGNORE_CASE).findAll(s)
-        return all.map {
-            it.range
-        }.toList()
-    }
 
 
 }

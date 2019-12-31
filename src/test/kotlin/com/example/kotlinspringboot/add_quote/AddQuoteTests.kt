@@ -38,7 +38,7 @@ class AddQuoteTests {
     ])
     internal fun `add quote tests`(value: String) {
         val split = value.split(",,").map { it.trim() }
-        val actual = AddQuote().addQuoteForString(split[0])
+        val actual = AddQuote().addQuoteForNonAsciiString(split[0])
         assertThat(actual).isEqualTo(split[1])
     }
 }

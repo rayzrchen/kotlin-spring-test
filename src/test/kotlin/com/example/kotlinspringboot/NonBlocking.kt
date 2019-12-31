@@ -11,7 +11,7 @@ class NonBlockingTest {
 
     @Test
     internal fun test() = runBlocking {
-        (0..100000)
+        (0..100)
                 .map {
                     async { something3(it) }
                 }
@@ -21,7 +21,7 @@ class NonBlockingTest {
     }
 
     private suspend fun something3(it: Int): Int {
-        delay(10000)
+        delay(10)
         return it
     }
 

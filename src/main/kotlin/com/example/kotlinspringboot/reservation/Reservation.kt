@@ -1,4 +1,4 @@
-package com.example.kotlinspringboot
+package com.example.kotlinspringboot.reservation
 
 import javax.persistence.Entity
 import javax.persistence.Id

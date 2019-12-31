@@ -2,10 +2,8 @@ package com.example.kotlinspringboot.parser.simple
 
 import com.example.kotlinspringboot.parser.preHandling
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class SimpleParserBaseTest {
